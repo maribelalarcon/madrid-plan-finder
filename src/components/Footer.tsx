@@ -34,7 +34,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-12 pt-8 border-t border-secondary-foreground/20 text-center text-sm text-secondary-foreground/60">
-          <p>© 2024 PlanazosMAD. Hecho con ❤️ en Madrid</p>
+          <p>© 2025 Maribel Alarcon. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>
