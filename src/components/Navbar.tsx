@@ -1,9 +1,12 @@
 import { useState, useEffect } from "react";
 import { Menu, X, Sparkles } from "lucide-react";
+import { getMonthInfoWithOffset } from "@/lib/monthPlans";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { monthName, monthSlug } = getMonthInfoWithOffset(0);
+  const { monthName: nextMonthName, monthSlug: nextMonthSlug } = getMonthInfoWithOffset(1);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,8 +17,8 @@ const Navbar = () => {
   }, []);
 
   const navLinks = [
-    { href: "#diciembre", label: "Diciembre" },
-    { href: "#enero", label: "Enero" },
+    { href: `#${monthSlug}`, label: monthName },
+    { href: `#${nextMonthSlug}`, label: nextMonthName },
     { href: "#siempre", label: "Todo el año" },
   ];
 

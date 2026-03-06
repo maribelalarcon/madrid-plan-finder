@@ -1,61 +1,67 @@
-import { Snowflake, Sparkles, Sun } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { CalendarDays, Sparkles, Sun } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import MonthSection from "@/components/MonthSection";
 import Footer from "@/components/Footer";
+import {
+  fetchMonthPlansFromMadridSecreto,
+  getMonthInfoWithOffset,
+  type Plan,
+} from "@/lib/monthPlans";
 
-const planesdiciembre = [
+const fallbackPlanesMesActual: Plan[] = [
   {
-    title: "Mercado de Navidad Plaza Mayor",
-    description: "El mercadillo navideño más emblemático de Madrid con más de 100 casetas llenas de magia.",
-    image: "https://images.unsplash.com/photo-1512389142860-9c449e58a814?w=800&auto=format&fit=crop",
-    location: "Plaza Mayor",
-    date: "1-31 Dic",
-    tags: ["Gratis", "Familia", "Navidad"],
+    title: "Ellas Crean 2026",
+    description: "Festival multidisciplinar con musica, cine, danza y artes visuales protagonizadas por talento femenino.",
+    image: "https://offloadmedia.feverup.com/madridsecreto.co/wp-content/uploads/2022/03/17083649/Ellas-crean-1024x576.jpg",
+    location: "Varios espacios de Madrid",
+    date: "Marzo 2026",
+    tags: ["Cultura", "Festival", "Mujeres"],
   },
   {
-    title: "Luces de Navidad en Gran Vía",
-    description: "Paseo nocturno por las espectaculares iluminaciones navideñas de la Gran Vía.",
-    image: "https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=800&auto=format&fit=crop",
-    location: "Gran Vía",
-    date: "Todo Diciembre",
-    tags: ["Gratis", "Romántico", "Fotos"],
+    title: "Teatralia",
+    description: "Una de las citas escenicas mas importantes para infancia y juventud, con funciones de companias nacionales e internacionales.",
+    image: "https://offloadmedia.feverup.com/madridsecreto.co/wp-content/uploads/2023/03/16111554/teatralia-1024x1024.jpg",
+    location: "Teatros de la Comunidad de Madrid",
+    date: "7-30 marzo 2026",
+    tags: ["Teatro", "Familia", "Escena"],
   },
   {
-    title: "Cortylandia",
-    description: "El mítico espectáculo navideño de El Corte Inglés que lleva décadas emocionando a Madrid.",
-    image: "https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=800&auto=format&fit=crop",
-    location: "Preciados",
-    date: "Dic",
-    tags: ["Tradición", "Familia", "Gratis"],
+    title: "DroneArt Show",
+    description: "Espectaculo nocturno de drones con musica clasica en directo y una puesta en escena audiovisual inmersiva.",
+    image: "https://offloadmedia.feverup.com/madridsecreto.co/wp-content/uploads/2025/07/18123244/DroneArt-Show-Madrid-1024x576.jpg",
+    location: "Hipodromo de la Zarzuela",
+    date: "27-28 marzo 2026",
+    tags: ["Tecnologia", "Concierto", "Noche"],
   },
   {
-    title: "Pista de Hielo Matadero",
-    description: "Patinaje sobre hielo en uno de los espacios culturales más cool de Madrid.",
-    image: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=800&auto=format&fit=crop",
+    title: "Feria del Comic de Madrid",
+    description: "Autores invitados, firmas, editoriales y actividades para descubrir las ultimas novedades del comic.",
+    image: "https://offloadmedia.feverup.com/madridsecreto.co/wp-content/uploads/2025/03/27122714/La-segunda-edicion-de-la-Feria-del-comic-llega-a-Matadero-Madrid-1024x683.jpg",
     location: "Matadero Madrid",
-    date: "Dic-Ene",
-    tags: ["Deporte", "Diversión", "€€"],
+    date: "27-30 marzo 2026",
+    tags: ["Comic", "Feria", "Cultura"],
   },
   {
-    title: "Belén del Palacio Real",
-    description: "Uno de los belenes más impresionantes de España con figuras del siglo XVIII.",
-    image: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&auto=format&fit=crop",
-    location: "Palacio Real",
-    date: "Dic",
-    tags: ["Cultura", "Tradición", "€"],
+    title: "Formula E en Madrid",
+    description: "Campeonato de monoplazas electricos con un fin de semana completo de velocidad y motor.",
+    image: "https://offloadmedia.feverup.com/madridsecreto.co/wp-content/uploads/2026/01/21113258/formula-e-madrid.jpg",
+    location: "Jarama",
+    date: "21 marzo 2026",
+    tags: ["Motor", "Deporte", "Evento"],
   },
   {
-    title: "Christmas Garden Madrid",
-    description: "Recorrido mágico de luces y decoraciones en el Real Jardín Botánico.",
-    image: "https://images.unsplash.com/photo-1576919228236-a097c32a5cd4?w=800&auto=format&fit=crop",
-    location: "Jardín Botánico",
-    date: "Dic-Ene",
-    tags: ["Naturaleza", "Luces", "€€"],
+    title: "Candlelight: Mozart, Bach y contemporaneos",
+    description: "Conciertos a la luz de las velas con repertorio clasico y piezas contemporaneas en espacios singulares.",
+    image: "https://offloadmedia.feverup.com/madridsecreto.co/wp-content/uploads/2024/06/21111614/Candlelight-Concierto-1024x683.jpg",
+    location: "Ateneo de Madrid",
+    date: "29 marzo 2026",
+    tags: ["Musica", "Concierto", "Experiencia"],
   },
 ];
 
-const planesenero = [
+const fallbackPlanesMesSiguiente: Plan[] = [
   {
     title: "Cabalgata de Reyes",
     description: "La tradicional cabalgata de los Reyes Magos recorriendo el centro de Madrid.",
@@ -173,26 +179,63 @@ const planessiempre = [
 ];
 
 const Index = () => {
+  const { monthName, monthSlug } = useMemo(() => getMonthInfoWithOffset(0), []);
+  const { monthName: nextMonthName, monthSlug: nextMonthSlug } = useMemo(() => getMonthInfoWithOffset(1), []);
+  const [plansMesActual, setPlansMesActual] = useState<Plan[]>(fallbackPlanesMesActual);
+  const [plansMesSiguiente, setPlansMesSiguiente] = useState<Plan[]>(fallbackPlanesMesSiguiente);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadPlans = async () => {
+      const [currentResult, nextResult] = await Promise.allSettled([
+        fetchMonthPlansFromMadridSecreto(monthSlug),
+        fetchMonthPlansFromMadridSecreto(nextMonthSlug),
+      ]);
+
+      if (
+        !cancelled &&
+        currentResult.status === "fulfilled" &&
+        currentResult.value.length > 0
+      ) {
+        setPlansMesActual(currentResult.value);
+      }
+
+      if (
+        !cancelled &&
+        nextResult.status === "fulfilled" &&
+        nextResult.value.length > 0
+      ) {
+        setPlansMesSiguiente(nextResult.value);
+      }
+    };
+
+    loadPlans();
+    return () => {
+      cancelled = true;
+    };
+  }, [monthSlug, nextMonthSlug]);
+
   return (
     <main className="min-h-screen bg-background">
       <Navbar />
       <HeroSection />
       
       <MonthSection
-        id="diciembre"
-        title="Diciembre"
-        subtitle="Planes navideños"
-        icon={<Snowflake className="w-6 h-6" />}
-        plans={planesdiciembre}
+        id={monthSlug}
+        title={monthName}
+        subtitle={`Planes de ${monthName.toLowerCase()} en Madrid`}
+        icon={<CalendarDays className="w-6 h-6" />}
+        plans={plansMesActual}
         gradientClass="section-winter"
       />
       
       <MonthSection
-        id="enero"
-        title="Enero"
-        subtitle="Nuevo año, nuevos planes"
+        id={nextMonthSlug}
+        title={nextMonthName}
+        subtitle={`Lo que viene en ${nextMonthName.toLowerCase()}`}
         icon={<Sparkles className="w-6 h-6" />}
-        plans={planesenero}
+        plans={plansMesSiguiente}
         gradientClass="section-january"
       />
       
